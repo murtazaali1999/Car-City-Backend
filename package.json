@@ -1,0 +1,27 @@
+{
+  "name": "car-city-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.7",
+    "nodemailer": "^6.7.2",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/murtazaali1999/Car-City-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/murtazaali1999/Car-City-Backend/issues"
+  },
+  "homepage": "https://github.com/murtazaali1999/Car-City-Backend#readme"
+}
