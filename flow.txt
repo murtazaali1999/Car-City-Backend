@@ -23,4 +23,5 @@ Owner
 - ...
 
 User
-- ...
+- filter and search posts based on their attributes, like seats/milage/type(auto/manaual etc.)
+- can view a specific showrooms cars
