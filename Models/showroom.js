@@ -42,6 +42,12 @@ const ShowRoomSchema = mongoose.Schema({
   closing_time: {
     type: Number,
   },
+
+  status: {
+    //if true then approved
+    type: Boolean,
+    default: false,
+  },
 });
 
 global.ShowRoom = global.ShowRoom || mongoose.model("ShowRoom", ShowRoomSchema);
