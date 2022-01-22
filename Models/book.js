@@ -1,12 +1,19 @@
 const mongoose = require("mongoose");
 
 const BookSchema = mongoose.Schema({
-  postid: {
+  //model for car that was rented or booked temporarily
+  customerid: {
     type: mongoose.Types.ObjectId,
-    ref: "Post",
+    ref: "Customer",
+  },
+
+  carid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Car",
   },
 
   start_time: {
+    //start time of car being rented
     type: Number,
   },
 

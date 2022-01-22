@@ -9,12 +9,29 @@ app.use(express.json({ limit: "50mb" })); //to parse outgoing json in the post r
 const serverPort = 1949;
 
 //models registering
-//require("./postModel");
+require("./Models/admin");
+require("./Models/book");
+require("./Models/car");
+require("./Models/company");
+require("./Models/customer");
+require("./Models/owner");
+require("./Models/post");
+require("./Models/sale");
+require("./Models/showroom");
 
 //routes registering
-//const post = require("./Routes/post");
+const admin = require("./Routes/admin");
+const book = require("./Routes/book");
+const car = require("./Routes/car");
+const company = require("./Routes/company");
+const customer = require("./Routes/customer");
+const owner = require("./Routes/owner");
+const post = require("./Routes/post");
+const sale = require("./Routes/sale");
+const showroom = require("./Routes/showroom");
 
-//app.use([]); //insert routes here
+app.use([admin, book, car, company, customer, owner, post, sale, showroom]);
+//insert routes here
 
 mongoose.connect(MONGOURI, {
   useNewUrlParser: true,

@@ -1,10 +1,19 @@
 const mongoose = require("mongoose");
 
 const ShowRoomSchema = mongoose.Schema({
+  //owner has multiple showrooms
   companyId: {
     type: mongoose.Types.ObjectId,
     ref: "Company",
   },
+
+  postid: [
+    //showroom can have multiple posts
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 
   showroom_address: {
     type: String,
@@ -19,8 +28,18 @@ const ShowRoomSchema = mongoose.Schema({
     type: Number,
   },
 
-  timing: {
+  opening_time: {
     type: Number,
+  },
+
+  closing_time: {
+    type: Number,
+  },
+
+  status: {
+    //if true then approved
+    type: Boolean,
+    default: false,
   },
 });
 

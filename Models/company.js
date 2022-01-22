@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const CompanySchema = mongoose.Schema({
+  ownerid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Owner",
+  },
+
   company_name: {
     type: String,
   },
@@ -10,14 +15,6 @@ const CompanySchema = mongoose.Schema({
     {
       type: mongoose.Types.ObjectId,
       ref: "Showroom",
-    },
-  ],
-
-  carid: [
-    //list of showroom a company has
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Cars",
     },
   ],
 });

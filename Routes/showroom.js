@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const epxress = require("express");
 const router = epxress.Router();
 
-//signin
-//approve or reject showroom creation
+//display those showrooms whose status is approved
 
 module.exports = router;

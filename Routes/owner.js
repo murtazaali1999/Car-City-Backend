@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const epxress = require("express");
 const router = epxress.Router();
 
+//signup
 //signin
-//approve or reject showroom creation
+//adds showroom
+//adds post
 
 module.exports = router;
