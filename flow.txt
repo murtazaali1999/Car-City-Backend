@@ -1,0 +1,26 @@
+Flow of Backend, Starting from top to bottom
+
+Main Functionalities
+
+Admin 
+- Will approve or reject showroom creation by a owner
+
+Owner
+- Owner will register his/her company
+- Can create his/her showrooms registered to his/her company(need to be approved by Admin)
+- Can create Posts(Car Ads), can create posts freely
+
+User
+- See Posts(Car Ads)
+- Can rent or buy cars
+
+# Additional Functionalities
+
+Admin
+- A single dashboard will be give upon login, where admin can view the showrooms details for approval or rejection
+
+Owner
+- ...
+
+User
+- ...
