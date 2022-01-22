@@ -5,6 +5,11 @@ const CompanySchema = mongoose.Schema({
     type: String,
   },
 
+  ownerid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Owner",
+  },
+
   showroomid: [
     //list of showroom a company has
     {

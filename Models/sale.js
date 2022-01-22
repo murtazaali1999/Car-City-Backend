@@ -1,16 +1,27 @@
 const mongoose = require("mongoose");
 
-const BookSchema = mongoose.Schema({
+const SaleSchema = mongoose.Schema({
   postid: {
     type: mongoose.Types.ObjectId,
     ref: "Post",
   },
 
-  sell_time: {
-    //when was the car sold
+  customerid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Customer",
+  },
+
+  carid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Car",
+  },
+
+  time: {
+    //time at which the car was bought
     type: Number,
+    default: Date.now(),
   },
 });
 
-global.Book = global.Book || mongoose.model("Book", BookSchema);
-module.exports = global.Book;
+global.Sale = global.Sale || mongoose.model("Sale", SaleSchema);
+module.exports = global.Sale;

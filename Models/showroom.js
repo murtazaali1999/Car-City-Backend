@@ -1,9 +1,25 @@
 const mongoose = require("mongoose");
 
 const ShowRoomSchema = mongoose.Schema({
+  //owner has multiple showrooms
   companyId: {
     type: mongoose.Types.ObjectId,
     ref: "Company",
+  },
+
+  ownerId: {
+    type: mongoose.Types.ObjectId,
+    ref: "Owner",
+  },
+
+  postid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Post",
+  },
+
+  carid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Car",
   },
 
   showroom_address: {
@@ -19,7 +35,11 @@ const ShowRoomSchema = mongoose.Schema({
     type: Number,
   },
 
-  timing: {
+  opening_time: {
+    type: Number,
+  },
+
+  closing_time: {
     type: Number,
   },
 });
