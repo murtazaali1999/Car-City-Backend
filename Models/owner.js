@@ -4,6 +4,7 @@ const OwnerSchema = mongoose.Schema({
   email: {
     type: String,
   },
+
   password: {
     type: String,
   },
@@ -13,20 +14,6 @@ const OwnerSchema = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Company",
   },
-
-  showroomid: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Showroom",
-    },
-  ],
-
-  postid: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Post",
-    },
-  ],
 });
 
 global.Owner = global.Owner || mongoose.model("Owner", OwnerSchema);

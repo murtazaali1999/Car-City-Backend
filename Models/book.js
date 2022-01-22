@@ -1,12 +1,7 @@
 const mongoose = require("mongoose");
 
 const BookSchema = mongoose.Schema({
-  postid: {
-    // see if this is viable
-    type: mongoose.Types.ObjectId,
-    ref: "Post",
-  },
-
+  //model for car that was rented or booked temporarily
   customerid: {
     type: mongoose.Types.ObjectId,
     ref: "Customer",

@@ -8,12 +8,13 @@ const PostSchema = mongoose.Schema({
   },
 
   post_type: {
+    //make a drop down for this, Rent/Sale
     //rent or sale
     type: String,
   },
 
   carid: {
-    //this will fetch all of the cars information
+    //post can be of a single car
     type: mongoose.Types.ObjectId,
     ref: "Car",
   },

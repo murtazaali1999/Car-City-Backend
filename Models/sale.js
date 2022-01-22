@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 
 const SaleSchema = mongoose.Schema({
-  postid: {
-    type: mongoose.Types.ObjectId,
-    ref: "Post",
-  },
+  //model for when was the car sold
 
   customerid: {
     type: mongoose.Types.ObjectId,

@@ -7,20 +7,13 @@ const ShowRoomSchema = mongoose.Schema({
     ref: "Company",
   },
 
-  ownerId: {
-    type: mongoose.Types.ObjectId,
-    ref: "Owner",
-  },
-
-  postid: {
-    type: mongoose.Types.ObjectId,
-    ref: "Post",
-  },
-
-  carid: {
-    type: mongoose.Types.ObjectId,
-    ref: "Car",
-  },
+  postid: [
+    //showroom can have multiple posts
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 
   showroom_address: {
     type: String,

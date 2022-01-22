@@ -88,18 +88,16 @@ const CarSchema = mongoose.Schema({
     type: Number,
   },
 
-  ownerid:
-    //to which showroom owner it belongs too
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Owner",
-    },
-
   showroom: {
-    //to which shoroom it belongs too
+    //to which showroom it belongs too
     type: mongoose.Types.ObjectId,
     ref: "ShowRoom",
   },
+
+  postid: {
+    type: mongoose.Types.ObjectId,
+    ref: "Post",
+  }, //a car can belong one post
 });
 
 global.Car = global.Car || mongoose.model("Car", CarSchema);
