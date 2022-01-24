@@ -19,8 +19,12 @@ const CarSchema = mongoose.Schema({
     type: Number,
   },
 
-  price: {
+  sale_price: {
     //for rent or for rent
+    type: Number,
+  },
+
+  rent_price: {
     type: Number,
   },
 
