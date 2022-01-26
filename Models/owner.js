@@ -13,6 +13,7 @@ const OwnerSchema = mongoose.Schema({
     //to which company a owner has
     type: mongoose.Types.ObjectId,
     ref: "Company",
+    default: null,
   },
 });
 

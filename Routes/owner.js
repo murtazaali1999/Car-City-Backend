@@ -6,5 +6,7 @@ const router = epxress.Router();
 //signin
 //adds showroom
 //adds post
+//update post
+//delete post
 
 module.exports = router;

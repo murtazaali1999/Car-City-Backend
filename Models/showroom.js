@@ -12,6 +12,7 @@ const ShowRoomSchema = mongoose.Schema({
     {
       type: mongoose.Types.ObjectId,
       ref: "Post",
+      default: null,
     },
   ],
 

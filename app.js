@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { Mongoose } = require("mongoose");
 const bodyparser = require("body-parser");
 //const sendEmail = require("./utils/sendEmail"); //for generating mails
 const { MONGOURI } = require("./Keys/keys");
