@@ -1,13 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const { Mongoose } = require("mongoose");
-const bodyparser = require("body-parser");
 //const sendEmail = require("./utils/sendEmail"); //for generating mails
 const { MONGOURI } = require("./Keys/keys");
 
 const app = express();
-app.use(express.json({ limit: "50mb" })); //to parse outgoing json in the post req
 const serverPort = 1949;
+const bodyparser = require("body-parser");
+
+app.use(express.json({ limit: "50mb" })); //to parse outgoing json in the post req
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
 
 //models registering
 require("./Models/admin");
@@ -21,6 +24,7 @@ require("./Models/sale");
 require("./Models/showroom");
 
 //routes registering
+const signup = require("./Routes/signup");
 const admin = require("./Routes/admin");
 const book = require("./Routes/book");
 const car = require("./Routes/car");
@@ -31,7 +35,18 @@ const post = require("./Routes/post");
 const sale = require("./Routes/sale");
 const showroom = require("./Routes/showroom");
 
-app.use([admin, book, car, company, customer, owner, post, sale, showroom]);
+app.use([
+  signup,
+  admin,
+  book,
+  car,
+  company,
+  customer,
+  owner,
+  post,
+  sale,
+  showroom,
+]);
 //insert routes here
 
 mongoose.connect(MONGOURI, {
