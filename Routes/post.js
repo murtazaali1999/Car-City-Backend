@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const epxress = require("express");
 const router = epxress.Router();
 
-//create post
+//create post //
 //display all posts //
 //posts by type //
 //posts by car preferences
@@ -10,8 +10,10 @@ const router = epxress.Router();
 //delete post
 
 /* 
-/post/createpost/:showroomid ==>
-/get/allposts ==>
+/post/createpost/:showroomid ==> Works
+/get/allposts ==> Works
+
+
 /get/postbytype/:type ==>
 /get/postbypreferences ==>
 /get/postbyid/:pst_id ==>
@@ -19,6 +21,7 @@ const router = epxress.Router();
  */
 
 const Post = mongoose.model("Post");
+const Car = mongoose.model("Car");
 
 router.post("/post/createpost/:showroomid", async (req, res) => {
   const {
@@ -132,14 +135,16 @@ router.post("/post/createpost/:showroomid", async (req, res) => {
 
 router.get("/get/allposts", async (req, res) => {
   try {
-    const posts = await Post.find({}).catch((err) => {
-      return console.log(err);
-    });
+    const posts = await Post.find({})
+      .populate("carid")
+      .catch((err) => {
+        return console.log(err);
+      });
     if (posts == null || !posts || posts == [] || posts == undefined) {
       return res.status(400).send("no posts exist", false);
     }
 
-    return res.status(200).send(posts, true);
+    return res.status(200).json({ message: posts });
   } catch (err) {
     console.log(err);
   }
