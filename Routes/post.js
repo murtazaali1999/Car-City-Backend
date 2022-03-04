@@ -9,6 +9,15 @@ const router = epxress.Router();
 //update post
 //delete post
 
+/* 
+/post/createpost/:showroomid ==>
+/get/allposts ==>
+/get/postbytype/:type ==>
+/get/postbypreferences ==>
+/get/postbyid/:pst_id ==>
+
+ */
+
 const Post = mongoose.model("Post");
 
 router.post("/post/createpost/:showroomid", async (req, res) => {

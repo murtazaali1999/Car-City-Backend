@@ -4,6 +4,10 @@ const router = epxress.Router();
 
 const Company = mongoose.model("Company");
 
+/* 
+/get/allcompanies ==> Works 
+*/
+
 router.get("/get/allcompanies", async (req, res) => {
   try {
     await Company.find({}).exec((err, companies) => {
