@@ -7,7 +7,7 @@ Admin
 
 Owner
 - Owner will register his/her company
-- Can create his/her showrooms registered to his/her company(need to be approved by Admin)
+- Can create his/her showrooms registered to his/her company
 - Can create Posts(Car Ads), can create posts freely
 
 User
@@ -17,7 +17,7 @@ User
 # Additional Functionalities
 
 Admin
-- A single dashboard will be give upon login, where admin can view the showrooms details for approval or rejection
+- A single dashboard will be give upon login, where admin can view the owner details for approval or rejection
 
 Owner
 - ...
