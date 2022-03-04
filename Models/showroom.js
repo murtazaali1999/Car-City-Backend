@@ -30,17 +30,13 @@ const ShowRoomSchema = mongoose.Schema({
   },
 
   opening_time: {
+    //use new Date(put date here)
     type: Number,
   },
 
   closing_time: {
+    //use new Date(put date here)
     type: Number,
-  },
-
-  status: {
-    //if true then approved
-    type: Boolean,
-    default: false,
   },
 });
 

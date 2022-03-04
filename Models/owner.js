@@ -15,6 +15,11 @@ const OwnerSchema = mongoose.Schema({
     ref: "Company",
     default: null,
   },
+
+  approval: {
+    type: Boolean,
+    default: false,
+  }, //means that can he create car/make posts/create showroom
 });
 
 global.Owner = global.Owner || mongoose.model("Owner", OwnerSchema);
