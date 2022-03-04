@@ -6,16 +6,79 @@ const router = epxress.Router();
 const Admin = mongoose.model("Admin");
 const Customer = mongoose.model("Customer");
 const Owner = mongoose.model("Owner");
+const Company = mongoose.model("Company");
 
 /* 
-/post/signup/owner ==> signup owner 
-
-
+/post/signup/owner ==> signup owner ==> Works
 /post/signup/customer ==> signup customer ==> Works
 /get/signincustomer ==> signin customer ==> Works
 /get/signinowner ==> signin owner ==> Works
 /get/signinadmin ==> signin admin ==> Works
  */
+
+//create owner/company
+router.post("/post/signup/owner", async (req, res) => {
+  const { email, password, company_name } = req.body;
+  //save owner/company/showroom
+  if (!email || !password || !company_name) {
+    return res.status(400).json({ message: "one or more fields are empty" });
+  }
+
+  try {
+    const owners = await Owner.find({});
+    const company = await Company.findOne({ company_name });
+    let check1 = false; //checks if owner exists
+    owners.map((owner) => {
+      if (owner.email == email || company_name == company.company_name) {
+        check1 = true;
+      }
+    });
+
+    if (check1 == true) {
+      return res.status(400).json({ message: "Owner  already exists" });
+    }
+
+    const newOwner = new Owner({
+      email,
+      password,
+    });
+
+    const newCompany = new Company({
+      ownerid: newOwner._id,
+      company_name,
+    });
+
+    newOwner.companyid = newCompany._id;
+    /* 
+    console.log("Owner==>", newOwner);
+    console.log("Company==>", newCompany);
+ */
+    await Owner.create({
+      email,
+      password,
+      companyid: newCompany._id,
+    })
+      .then(() => {
+        console.log("Owner Saved Successfully");
+      })
+      .catch((err) => console.log(err.message));
+
+    await Company.create({
+      company_name,
+      ownerid: newOwner._id,
+    })
+      .then(() => {
+        console.log("Company Saved Successfully");
+      })
+      .catch((err) => console.log(err.message));
+
+    return res
+      .status(200)
+      .json({ message: "Owner and Company successfully saved" });
+  } catch (err) {
+    console.log(err.message);
+  }
+});
 
 router.post("/post/signup/customer", async (req, res) => {
   const { email, password, address, phonenumber } = req.body;
@@ -51,51 +114,6 @@ router.post("/post/signup/customer", async (req, res) => {
     });
 
     return res.status(200).json({ message: "Customer Signed Up Successfully" });
-  } catch (err) {
-    console.log(err.message);
-  }
-});
-
-//create owner/showroom/company
-router.post("/post/signup/owner", async (req, res) => {
-  const { email, password, company_name, showroom } = req.body;
-  //save owner/company/showroom
-  if (!email || !password) {
-    return res.status(400).json({ message: "one or more fields are empty" });
-  }
-
-  try {
-    const owners = await Owner.find({});
-    let check1 = false; //checks if owner exists
-    owners.map((owner) => {
-      if (owner.email == email) {
-        check1 = true;
-      }
-    });
-
-    if (check1 == true) {
-      return res.status(400).json({ message: "owner  already exists" });
-    }
-
-    const newOwner = new Owner({
-      email,
-      password,
-    });
-
-    const ownerId = newOwner._id;
-
-    const newCompany = new Company({
-      ownerId,
-      company_name,
-    });
-
-    await newOwner.save().catch((err) => {
-      console.log(err);
-    });
-
-    return res
-      .status(200)
-      .json({ message: "Owner/Company/Showroom successfully saved" });
   } catch (err) {
     console.log(err.message);
   }
