@@ -10,10 +10,8 @@ Owner
 - Can create his/her showrooms registered to his/her company
 - Can create Posts(Car Ads), can create posts freely
 
-
 Admin
 - A single dashboard will be give upon login, where admin can view the owner details for approval or rejection
-
 
 User
 - filter and search posts based on their attributes, like seats/milage/type(auto/manaual etc.)

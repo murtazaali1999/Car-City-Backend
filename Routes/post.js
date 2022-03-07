@@ -12,12 +12,11 @@ const router = epxress.Router();
 /* 
 /post/createpost/:showroomid ==> Works
 /get/allposts ==> Works
+/get/postbytype/:type ==> Works
+/get/postbyid/:pst_id ==> Works
 
 
-/get/postbytype/:type ==>
 /get/postbypreferences ==>
-/get/postbyid/:pst_id ==>
-
  */
 
 const Post = mongoose.model("Post");
@@ -155,14 +154,17 @@ router.get("/get/postbytype/:type", async (req, res) => {
   try {
     const posts = await Post.find({ post_type: req.params.type }).catch(
       (err) => {
-        return console.log(err);
+        console.log(err);
+        return res
+          .status(400)
+          .json({ message: "there was an error finding posts" });
       }
     );
     if (posts == null || !posts || posts == [] || posts == undefined) {
-      return res.status(400).send("no posts exist", false);
+      return res.status(400).json({ message: "no posts exist" });
     }
 
-    return res.status(200).send(posts, true);
+    return res.status(200).json({ message: posts });
   } catch (err) {
     console.log(err);
   }
