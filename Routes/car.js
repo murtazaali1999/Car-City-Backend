@@ -6,7 +6,9 @@ const Car = mongoose.model("Car");
 const ShowRoom = mongoose.model("ShowRoom");
 
 router.get("/get/allcars", async (req, res) => {
-  return await Car.find({}).catch((err) => console.log(err));
+  return res
+    .status(200)
+    .json({ message: await Car.find({}).catch((err) => console.log(err)) });
 });
 
 router.get("/get/carsbyshowroom/:s_id", async (req, res) => {

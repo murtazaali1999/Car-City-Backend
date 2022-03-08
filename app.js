@@ -5,7 +5,7 @@ const { Mongoose } = require("mongoose");
 const { MONGOURI } = require("./Keys/keys");
 
 const app = express();
-const serverPort = 1949;
+const serverPort = process.env.PORT || 1949;
 const bodyparser = require("body-parser");
 
 app.use(express.json({ limit: "50mb" })); //to parse outgoing json in the post req
