@@ -10,6 +10,9 @@ const Company = mongoose.model("Company");
 /put/createshowroom/:c_id ==> Works
 /get/allshowroom ==> Works
 /get/allshowroomcars/:s_id
+
+/get/singleshowroom/:s_id ==> Works
+/put/updateshowroom/:s_id ==> Works
 */
 
 //c_id is company-id
@@ -124,6 +127,62 @@ router.get("/get/allshowroomcars/:s_id", async (req, res) => {
           console.log(err.message);
         }
       });
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+router.get("/get/singleshowroom/:s_id", async (req, res) => {
+  try {
+    const showroom = await ShowRoom.find({ _id: req.params.s_id }).catch(
+      (err) => console.log(err)
+    );
+    if (showroom.length == 0 || !showroom || showroom == []) {
+      return res.status(400).json({
+        message: "no showroom exists with this id or no showroom exists",
+      });
+    }
+
+    return res.status(200).json({ message: showroom });
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+router.put("/put/updateshowroom/:s_id", async (req, res) => {
+  const {
+    showroom_address,
+    showroom_image,
+    phone_number,
+    opening_time,
+    closing_time,
+  } = req.body;
+
+  try {
+    const showroom = await ShowRoom.findOne({ _id: req.params.s_id }).catch(
+      (err) => {
+        return console.log(err);
+      }
+    );
+
+    if (showroom.length == 0 || !showroom || showroom == []) {
+      return res.status(400).json({
+        message: "no showroom exists with this id or no showroom exists",
+      });
+    }
+
+    showroom.showroom_address = showroom_address;
+    showroom.showroom_image = showroom_image;
+    showroom.phone_number = phone_number;
+    showroom.opening_time = opening_time;
+    showroom.closing_time = closing_time;
+
+    await showroom
+      .save()
+      .then(() => console.log("ShowRoom Updated Succesfully"))
+      .catch((err) => console.log(err));
+
+    return res.status(200).json({ message: showroom });
   } catch (err) {
     console.log(err.message);
   }

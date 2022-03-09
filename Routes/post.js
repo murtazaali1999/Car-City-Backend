@@ -13,8 +13,9 @@ const router = epxress.Router();
 /post/createpost/:showroomid ==> Works
 /get/allposts ==> Works
 /get/postbytype/:type ==> Works
-/get/postbyid/:pst_id ==> Works
-
+/get/postbyid/:pst_id ==> Works //same to below
+/get/getsinglepost/:p_id ==> Works
+/put/updatepost/:p_id ==> Works
 
 /get/postbypreferences ==>
  */
@@ -173,21 +174,9 @@ router.get("/get/postbytype/:type", async (req, res) => {
 //search by preferences
 router.get("/get/postbypreferences", async (req, res) => {
   let userPattern = new RegExp("^" + req.query);
-  console.log("pattern==>", userPattern);
-  const {
-    car_model,
-    sale_price,
-    rent_price,
-    fuel_avg,
-    seats,
-    bags,
-    assembly,
-    body_type,
-    transmission,
-    car_produced,
-  } = req.query;
-
-  console.log("query=>", req.query);
+  const posts = await Post.find({}).populate("carid");
+  posts.map((post) => {}); ///
+  console.log("query result=>", await Post.find({ userPattern }));
 });
 
 router.get("/get/postbyid/:pst_id", async (req, res) => {
@@ -208,47 +197,51 @@ router.get("/get/postbyid/:pst_id", async (req, res) => {
   }
 });
 
-router.get("/get/test", async (req, res) => {
-  const {
-    car_model,
-    sale_price,
-    rent_price,
-    fuel_avg,
-    seats,
-    bags,
-    assembly,
-    body_type,
-    transmission,
-    car_produced,
-  } = req.body;
+router.get("/get/getsinglepost/:p_id", async (req, res) => {
+  try {
+    const post = await Post.findOne({ _id: req.params.p_id })
+      .populate("carid")
+      .catch((err) => {
+        return console.log(err);
+      });
 
-  console.log(req.body.sale_price);
+    if (post == null || !post || post == [] || post.length == 0) {
+      return res.status(400).send("Post does'nt exist with this ID", false);
+    }
 
-  const query = await Car.find({
-    car_model,
-    sale_price,
-    rent_price,
-    fuel_avg,
-    seats,
-    bags,
-    assembly,
-    body_type,
-    transmission,
-    car_produced,
-  });
+    return res.status(200).json({ message: post });
+  } catch (err) {
+    console.log(err);
+  }
+});
 
-  console.log(query);
+router.put("/put/updatepost/:p_id", async (req, res) => {
+  const { post_type } = req.body;
+
+  try {
+    const post = await Post.findOne({ _id: req.params.p_id }).catch((err) => {
+      return console.log(err.message);
+    });
+
+    if (post == null || !post || post == [] || post.length == 0) {
+      return res
+        .status(400)
+        .json({ message: "Post does'nt exist with this ID" });
+    }
+
+    post.post_type = post_type;
+
+    await post
+      .save()
+      .then(() => {
+        console.log("Post Updated Sucessfull");
+      })
+      .catch((err) => console.log(err.message));
+
+    return res.status(200).json({ message: post });
+  } catch (err) {
+    console.log(err.message);
+  }
 });
 
 module.exports = router;
-
-/* script for getting week before current time in new Date() format
-//Get today's date using the JavaScript Date object.
-var ourDate = new Date();
-
-//Change it so that it is 7 days in the past.
-var pastDate = ourDate.getDate() - 7;
-ourDate.setDate(pastDate);
-
-//Log the date to our web console.
-console.log(ourDate); //week before script */
