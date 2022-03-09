@@ -25,11 +25,17 @@ router.post("/post/signup/owner", async (req, res) => {
   }
 
   try {
-    const owners = await Owner.find({});
-    const company = await Company.findOne({ company_name });
+    const owners = await Owner.find({}).catch((err) => {
+      return console.log(err.message);
+    });
+
+    const company = await Company.findOne({ company_name }).catch((err) => {
+      return console.log(err.message);
+    });
+
     let check1 = false; //checks if owner exists
     owners.map((owner) => {
-      if (owner.email == email || company_name == company.company_name) {
+      if (owner.email == email || company_name == company?.company_name) {
         check1 = true;
       }
     });

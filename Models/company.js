@@ -14,7 +14,7 @@ const CompanySchema = mongoose.Schema({
     //list of showroom a company has
     {
       type: mongoose.Types.ObjectId,
-      ref: "Showroom",
+      ref: "ShowRoom",
     },
   ],
 });
