@@ -65,26 +65,24 @@ router.put("/put/createshowroom/:c_id", async (req, res) => {
 
     company.showroomid.push(newShowRoom._id);
 
-    newShowRoom.opening_time = new Date(opening_time);
-    newShowRoom.closing_time = new Date(closing_time);
-
-    await ShowRoom.create({
-      showroom_address,
-      showroom_image,
-      phone_number,
-      opening_time,
-      closing_time,
-      companyId: company._id,
+    await newShowRoom.save().catch((err) => {
+      return console.log(err.message);
     });
 
-    await company.save().then(() => {
-      console.log("company updated with showroom");
-    });
+    await company
+      .save()
+      .then(() => {
+        console.log("company updated with showroom");
+      })
+      .catch((err) => {
+        console.log(err.message);
+        return res.status(200).json({ message: "error in saving showroom" });
+      });
 
     res.status(200).json({ message: "Showroom Created Succesfully" });
-
+    /* 
     console.log("ShowRoom", newShowRoom);
-    console.log("Company", company);
+    console.log("Company", company); */
   } catch (err) {
     console.log(err.message);
   }
@@ -134,9 +132,9 @@ router.get("/get/allshowroomcars/:s_id", async (req, res) => {
 
 router.get("/get/singleshowroom/:s_id", async (req, res) => {
   try {
-    const showroom = await ShowRoom.find({ _id: req.params.s_id }).catch(
-      (err) => console.log(err)
-    );
+    const showroom = await ShowRoom.find({ _id: req.params.s_id })
+      .populate("companyId")
+      .catch((err) => console.log(err));
     if (showroom.length == 0 || !showroom || showroom == []) {
       return res.status(400).json({
         message: "no showroom exists with this id or no showroom exists",

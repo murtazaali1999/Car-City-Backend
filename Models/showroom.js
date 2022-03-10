@@ -31,12 +31,12 @@ const ShowRoomSchema = mongoose.Schema({
 
   opening_time: {
     //use new Date(put date here)
-    type: Number,
+    type: String,
   },
 
   closing_time: {
     //use new Date(put date here)
-    type: Number,
+    type: String,
   },
 });
 
