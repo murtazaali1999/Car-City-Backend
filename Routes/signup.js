@@ -8,12 +8,15 @@ const Customer = mongoose.model("Customer");
 const Owner = mongoose.model("Owner");
 const Company = mongoose.model("Company");
 
+const sendEmail = require("../Utils/mail");
+
 /* 
 /post/signup/owner ==> signup owner ==> Works
 /post/signup/customer ==> signup customer ==> Works
 /get/signincustomer ==> signin customer ==> Works
 /get/signinowner ==> signin owner ==> Works
 /get/signinadmin ==> signin admin ==> Works
+/put/forgotpassword/owner ==> reset token to user ==> Works
  */
 
 //create owner/company
@@ -197,6 +200,81 @@ router.get("/get/signinadmin", async (req, res) => {
     return res.status(400).json({ message: "email or password is incorrect" });
   } catch (err) {
     console.log(err);
+  }
+});
+
+router.put("/put/forgotpassword/owner", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const owner = await Owner.findOne({ email }).catch((err) => {
+      return console.log(err.message);
+    });
+
+    if (owner == null || owner == [] || !owner || owner?.length == 0) {
+      return res.status(400).json({ message: "this owner does not exist" });
+    }
+    owner.reset_token = Number(Math.floor(Math.random() * 9999) + 1000);
+    console.log(owner.reset_token);
+    await owner
+      .save()
+      .then(() => console.log("reset token saved successfully for owner"))
+      .catch((err) => {
+        return console.log(err.message);
+      });
+
+    await sendEmail({
+      email: owner.email,
+      subject: "Car City Reset Password",
+      message: `This is an email from Car City,This is your ${owner.reset_token} reset token`,
+    })
+      .then(() => {
+        console.log("Email Sent Successfully to Owner");
+        res.status(200).json({
+          message:
+            "Email sent sucessfully, Check your email for the reset token",
+        });
+      })
+      .catch((err) => console.log(err.message));
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+router.put("/put/reset/owner", async (req, res) => {
+  try {
+    const { email, password, token } = req.body;
+    if (!email || !password || !token) {
+      res.status(400).json({
+        message: "One or more fields are empty",
+      });
+    }
+    const owner = await Owner.findOne({ email }).catch((err) => {
+      return console.log(err.message);
+    });
+
+    if (owner == null || owner == [] || !owner || owner?.length == 0) {
+      return res.status(400).json({ message: "this owner does not exist" });
+    }
+
+    if (owner.reset_token != token) {
+      return res
+        .status(400)
+        .json({ message: "the token entered is not correct" });
+    }
+
+    owner.password = password;
+    owner.reset_token = null;
+
+    await owner
+      .save()
+      .then(() => console.log("Owner Password Updated Successfully"))
+      .catch((err) => {
+        return console.log(err.message);
+      });
+
+    res.status(200).json({ message: "Owner Password Updated Successfully" });
+  } catch (err) {
+    console.log(err.message);
   }
 });
 

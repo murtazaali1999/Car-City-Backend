@@ -16,6 +16,10 @@ const OwnerSchema = mongoose.Schema({
     default: null,
   },
 
+  reset_token: {
+    type: Number,
+  },
+
   approval: {
     type: Boolean,
     default: false,
