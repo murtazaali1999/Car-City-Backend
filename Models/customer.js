@@ -17,6 +17,10 @@ const customer_Schema = mongoose.Schema({
   phonenumber: {
     type: String,
   },
+
+  reset_token: {
+    type: Number,
+  },
 });
 
 global.Customer =

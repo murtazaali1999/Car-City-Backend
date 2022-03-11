@@ -240,6 +240,48 @@ router.put("/put/forgotpassword/owner", async (req, res) => {
   }
 });
 
+router.put("/put/forgotpassword/customer", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const customer = await Customer.findOne({ email }).catch((err) => {
+      return console.log(err.message);
+    });
+
+    if (
+      customer == null ||
+      customer == [] ||
+      !customer ||
+      customer?.length == 0
+    ) {
+      return res.status(400).json({ message: "this owner does not exist" });
+    }
+    customer.reset_token = Number(Math.floor(Math.random() * 9999) + 1000);
+    console.log(customer.reset_token);
+    await customer
+      .save()
+      .then(() => console.log("reset token saved successfully for customer"))
+      .catch((err) => {
+        return console.log(err.message);
+      });
+
+    await sendEmail({
+      email: customer.email,
+      subject: "Car City Reset Password",
+      message: `This is an email from Car City,This is your ${customer.reset_token} reset token`,
+    })
+      .then(() => {
+        console.log("Email Sent Successfully to Customer");
+        res.status(200).json({
+          message:
+            "Email sent sucessfully, Check your email for the reset token",
+        });
+      })
+      .catch((err) => console.log(err.message));
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
 router.put("/put/reset/owner", async (req, res) => {
   try {
     const { email, password, token } = req.body;
@@ -252,7 +294,7 @@ router.put("/put/reset/owner", async (req, res) => {
       return console.log(err.message);
     });
 
-    if (owner == null || owner == [] || !owner || owner?.length == 0) {
+    if (owner == null || owner == [] || !owner) {
       return res.status(400).json({ message: "this owner does not exist" });
     }
 
@@ -273,6 +315,44 @@ router.put("/put/reset/owner", async (req, res) => {
       });
 
     res.status(200).json({ message: "Owner Password Updated Successfully" });
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+router.put("/put/reset/customer", async (req, res) => {
+  try {
+    const { email, password, token } = req.body;
+    if (!email || !password || !token) {
+      res.status(400).json({
+        message: "One or more fields are empty",
+      });
+    }
+    const customer = await Customer.findOne({ email }).catch((err) => {
+      return console.log(err.message);
+    });
+
+    if (customer == null || customer == [] || !customer) {
+      return res.status(400).json({ message: "this customer does not exist" });
+    }
+
+    if (customer.reset_token != token) {
+      return res
+        .status(400)
+        .json({ message: "the token entered is not correct" });
+    }
+
+    customer.password = password;
+    customer.reset_token = null;
+
+    await customer
+      .save()
+      .then(() => console.log("Customer Password Updated Successfully"))
+      .catch((err) => {
+        return console.log(err.message);
+      });
+
+    res.status(200).json({ message: "Customer Password Updated Successfully" });
   } catch (err) {
     console.log(err.message);
   }
