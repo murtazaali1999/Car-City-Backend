@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const { Mongoose } = require("mongoose");
 //const sendEmail = require("./utils/sendEmail"); //for generating mails
 const { MONGOURI } = require("./Keys/keys");
+const cors = require("cors");
 
 const app = express();
 const serverPort = process.env.PORT || 1949;
 const bodyparser = require("body-parser");
 
+app.use(cors());
 app.use(express.json({ limit: "50mb" })); //to parse outgoing json in the post req
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());

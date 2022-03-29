@@ -166,17 +166,29 @@ router.get("/get/signinowner", async (req, res) => {
     const owners = await Owner.find({});
 
     let check1 = false; //checks if customer exists
+    let check2 = false;
+    let singleOwner = null;
     owners.map((owner) => {
       if (owner.email == email && owner.password == password) {
         check1 = true;
+        if (owner.approval == true) {
+          singleOwner = owner;
+          check2 = true;
+        }
       }
     });
 
     if (check1 == false) {
       return res.status(400).json({ message: "owner does not exists" });
+    } else if (check2 == false) {
+      return res.status(400).json({ message: "this owner is not approved" });
     }
 
-    return res.status(200).json({ message: "owner signed in successfully" });
+    singleOwner.password = null;
+    singleOwner.reset_token = null;
+    console.log(owner);
+
+    return res.status(200).json({ message: owner });
   } catch (err) {
     console.log(err);
   }

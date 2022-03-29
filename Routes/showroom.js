@@ -133,7 +133,7 @@ router.get("/get/allshowroomcars/:s_id", async (req, res) => {
 router.get("/get/singleshowroom/:s_id", async (req, res) => {
   try {
     const showroom = await ShowRoom.find({ _id: req.params.s_id })
-      .populate("companyId")
+      .populate("companyId postid")
       .catch((err) => console.log(err));
     if (showroom.length == 0 || !showroom || showroom == []) {
       return res.status(400).json({

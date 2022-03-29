@@ -34,11 +34,12 @@ router.get("/get/singlecompany/:c_id", async (req, res) => {
       .catch((err) => {
         return console.log(err.message);
       });
+
     if (company == null || !company || company == [] || company.length == 0) {
       return res.status(400).json({ message: company });
+    } else {
+      return res.status(200).json({ message: company });
     }
-
-    return res.status(200).json({ message: company });
   } catch (err) {
     console.log(err.message);
   }

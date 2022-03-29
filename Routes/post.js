@@ -22,6 +22,7 @@ const router = epxress.Router();
 
 const Post = mongoose.model("Post");
 const Car = mongoose.model("Car");
+const ShowRoom = mongoose.model("ShowRoom");
 
 router.post("/post/createpost/:showroomid", async (req, res) => {
   const {
@@ -48,27 +49,27 @@ router.post("/post/createpost/:showroomid", async (req, res) => {
   } = req.body;
 
   if (
-    (car_name,
+    !car_name ||
     !car_model ||
-      !registered_in ||
-      !number_plate ||
-      !sale_price ||
-      !rent_price ||
-      !fuel_avg ||
-      !seats ||
-      !bags ||
-      !assembly ||
-      !body_type ||
-      !color ||
-      !engine_type ||
-      !transmission ||
-      !car_produced ||
-      !car_image ||
-      !discription ||
-      !features ||
-      !car_milage ||
-      !post_type ||
-      !req.params.showroomid)
+    !registered_in ||
+    !number_plate ||
+    !sale_price ||
+    !rent_price ||
+    !fuel_avg ||
+    !seats ||
+    !bags ||
+    !assembly ||
+    !body_type ||
+    !color ||
+    !engine_type ||
+    !transmission ||
+    !car_produced ||
+    !car_image ||
+    !discription ||
+    !features ||
+    !car_milage ||
+    !post_type ||
+    !req.params.showroomid
   ) {
     return res.status(400).json({ message: "one or more fields are emptys" });
   }
@@ -121,13 +122,20 @@ router.post("/post/createpost/:showroomid", async (req, res) => {
         console.log(err);
       });
 
-    await Post.create({ post_type, carid: newCar._id })
-      .then(() => {
-        console.log("Post Saved Successfully");
-      })
-      .catch((err) => {
+    const newPost = await Post.create({ post_type, carid: newCar._id }).catch(
+      (err) => {
         console.log(err);
-      });
+      }
+    );
+
+    await ShowRoom.findOneAndUpdate(
+      { _id: req.params.showroomid },
+      { $push: { postid: newPost } }
+    );
+    /*     console.log("New-Post==>", newPost);
+     */
+
+    res.status(200).json({ message: "Car Posted Successfully to Showroom" });
   } catch (err) {
     console.log(err.message);
   }
@@ -181,17 +189,19 @@ router.get("/get/postbypreferences", async (req, res) => {
 
 router.get("/get/postbyid/:pst_id", async (req, res) => {
   try {
-    await Post.findOne({ _id: req.params.pst_id }).exec((err, post) => {
-      if (!err) {
-        if (post == [] || post == null || post == undefined || !post) {
-          console.log("There are currently no posts available");
+    await Post.findOne({ _id: req.params.pst_id })
+      .populate("carid")
+      .exec((err, post) => {
+        if (!err) {
+          if (post == [] || post == null || post == undefined || !post) {
+            console.log("There are currently no posts available");
+          } else {
+            return res.status(200).json({ message: post });
+          }
         } else {
-          return res.status(200).json({ message: post });
+          console.log(err);
         }
-      } else {
-        console.log(err);
-      }
-    });
+      });
   } catch (err) {
     console.log(err);
   }
@@ -219,9 +229,11 @@ router.put("/put/updatepost/:p_id", async (req, res) => {
   const { post_type } = req.body;
 
   try {
-    const post = await Post.findOne({ _id: req.params.p_id }).catch((err) => {
-      return console.log(err.message);
-    });
+    const post = await Post.findOne({ _id: req.params.p_id })
+      .populate("carid")
+      .catch((err) => {
+        return console.log(err.message);
+      });
 
     if (post == null || !post || post == [] || post.length == 0) {
       return res
