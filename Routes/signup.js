@@ -47,35 +47,27 @@ router.post("/post/signup/owner", async (req, res) => {
       return res.status(400).json({ message: "Owner  already exists" });
     }
 
+    const newCompany = new Company({
+      company_name,
+    });
+
     const newOwner = new Owner({
       email,
       password,
     });
 
-    const newCompany = new Company({
-      ownerid: newOwner._id,
-      company_name,
-    });
-
     newOwner.companyid = newCompany._id;
-    /* 
-    console.log("Owner==>", newOwner);
-    console.log("Company==>", newCompany);
- */
-    await Owner.create({
-      email,
-      password,
-      companyid: newCompany._id,
-    })
+    newCompany.ownerid = newOwner._id;
+
+    await newOwner
+      .save()
       .then(() => {
         console.log("Owner Saved Successfully");
       })
       .catch((err) => console.log(err.message));
 
-    await Company.create({
-      company_name,
-      ownerid: newOwner._id,
-    })
+    await newCompany
+      .save()
       .then(() => {
         console.log("Company Saved Successfully");
       })
@@ -128,7 +120,7 @@ router.post("/post/signup/customer", async (req, res) => {
   }
 });
 
-router.get("/get/signincustomer", async (req, res) => {
+router.post("/post/signincustomer", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -139,9 +131,12 @@ router.get("/get/signincustomer", async (req, res) => {
     const customers = await Customer.find({});
 
     let check1 = false; //checks if customer exists
+    let singleCustomer = {};
     customers.map((customer) => {
       if (customer.email == email && customer.password == password) {
         check1 = true;
+        singleCustomer = customer;
+        delete singleCustomer.password
       }
     });
 
@@ -149,13 +144,13 @@ router.get("/get/signincustomer", async (req, res) => {
       return res.status(400).json({ message: "customer does not exists" });
     }
 
-    return res.status(200).json({ message: "customer signed in successfully" });
+    return res.status(200).json({ customer: singleCustomer, message: "Logged In Sucessfully" });
   } catch (err) {
     console.log(err);
   }
 });
 
-router.get("/get/signinowner", async (req, res) => {
+router.post("/post/signinowner", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -186,15 +181,14 @@ router.get("/get/signinowner", async (req, res) => {
 
     singleOwner.password = null;
     singleOwner.reset_token = null;
-    console.log(owner);
 
-    return res.status(200).json({ message: owner });
+    return res.status(200).json({ Owner: singleOwner, Message: "Logged In Sucessfully" });
   } catch (err) {
     console.log(err);
   }
 });
 
-router.get("/get/signinadmin", async (req, res) => {
+router.post("/post/signinadmin", async (req, res) => {
   const { email, password } = req.body;
 
   try {

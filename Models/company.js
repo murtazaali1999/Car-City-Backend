@@ -17,6 +17,8 @@ const CompanySchema = mongoose.Schema({
       ref: "ShowRoom",
     },
   ],
+
+  showroom_count: { type: Number }
 });
 
 global.Company = global.Company || mongoose.model("Company", CompanySchema);

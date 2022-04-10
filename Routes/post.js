@@ -135,7 +135,7 @@ router.post("/post/createpost/:showroomid", async (req, res) => {
     /*     console.log("New-Post==>", newPost);
      */
 
-    res.status(200).json({ message: "Car Posted Successfully to Showroom" });
+    res.status(200).json({ Post: newPost, message: "Car Posted Successfully to Showroom" });
   } catch (err) {
     console.log(err.message);
   }
@@ -183,7 +183,7 @@ router.get("/get/postbytype/:type", async (req, res) => {
 router.get("/get/postbypreferences", async (req, res) => {
   let userPattern = new RegExp("^" + req.query);
   const posts = await Post.find({}).populate("carid");
-  posts.map((post) => {}); ///
+  posts.map((post) => { }); ///
   console.log("query result=>", await Post.find({ userPattern }));
 });
 

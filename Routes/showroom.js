@@ -23,6 +23,7 @@ router.put("/put/createshowroom/:c_id", async (req, res) => {
     phone_number,
     opening_time,
     closing_time,
+    city
   } = req.body;
 
   if (
@@ -61,6 +62,7 @@ router.put("/put/createshowroom/:c_id", async (req, res) => {
       opening_time,
       closing_time,
       companyId: company._id,
+      city
     });
 
     company.showroomid.push(newShowRoom._id);
@@ -79,7 +81,7 @@ router.put("/put/createshowroom/:c_id", async (req, res) => {
         return res.status(200).json({ message: "error in saving showroom" });
       });
 
-    res.status(200).json({ message: "Showroom Created Succesfully" });
+    res.status(200).json({ ShowRoom: newShowRoom, message: "Showroom Created Succesfully" });
     /* 
     console.log("ShowRoom", newShowRoom);
     console.log("Company", company); */
@@ -154,16 +156,19 @@ router.put("/put/updateshowroom/:s_id", async (req, res) => {
     phone_number,
     opening_time,
     closing_time,
+    city
   } = req.body;
 
   try {
-    const showroom = await ShowRoom.findOne({ _id: req.params.s_id }).catch(
-      (err) => {
-        return console.log(err);
-      }
-    );
+    const showroom = await ShowRoom.findOne({ _id: req.params.s_id })
+      .populate("postid companyId")
+      .catch(
+        (err) => {
+          return console.log(err);
+        }
+      );
 
-    if (showroom.length == 0 || !showroom || showroom == []) {
+    if (!showroom || showroom == {}) {
       return res.status(400).json({
         message: "no showroom exists with this id or no showroom exists",
       });
@@ -174,11 +179,12 @@ router.put("/put/updateshowroom/:s_id", async (req, res) => {
     showroom.phone_number = phone_number;
     showroom.opening_time = opening_time;
     showroom.closing_time = closing_time;
+    showroom.city = city;
 
     await showroom
       .save()
       .then(() => console.log("ShowRoom Updated Succesfully"))
-      .catch((err) => console.log(err));
+      .catch((err) => { return console.log(err) });
 
     return res.status(200).json({ message: showroom });
   } catch (err) {

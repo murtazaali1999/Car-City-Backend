@@ -23,4 +23,22 @@ router.get("/get/getallowner", async (req, res) => {
   }
 });
 
+router.get("/get/getallrejectowner", async (req, res) => {
+  try {
+    const owners = await Owner.find({ owner: false }).catch((err) => console.log(err));
+    res.status(200).json({ message: owners });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get("/get/getallapproveowner", async (req, res) => {
+  try {
+    const owners = await Owner.find({ owner: true }).catch((err) => console.log(err));
+    res.status(200).json({ message: owners });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;

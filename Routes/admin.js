@@ -38,54 +38,6 @@ router.post("/admin/signin", async (req, res) => {
 
   return res.status(200).send("signed up successfully", true);
 });
-{
-  /* 
-router.put("/admin/approvalshowroom/:sh_id", async (req, res) => {
-  try {
-    const findShowRoom = await ShowRoom.find({ _id: req.params.sh_id }).catch(
-      (err) => {
-        console.log(err);
-      }
-    );
-    findShowRoom.status = true;
-    await findShowRoom.save();
-    return res.status(200).send("showroom is approved");
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-router.put("/admin/rejectshowroom/:sh_id", async (req, res) => {
-  try {
-    //delete showroom
-    //delete link in company
-    await ShowRoom.deleteOne({ _id: req.params.sh_id })
-      .then(() => {
-        console.log("Showroom rejected successfully");
-      })
-      .catch((err) => console.log(err.message));
-
-    const companys = await Company.find({});
-
-    companys.map((company) => {
-      //iterate company
-      company.showroomid.map(async (showroom) => {
-        //iterate company=>showroom
-        if (showroom._id == req.params.sh_id) {
-          company.showroomid = null;
-          await company
-            .save()
-            .then(() => console.log("Removed showroom from company"))
-            .catch((err) => console.log(err.message));
-        }
-      });
-    });
-  } catch (err) {
-    console.log(err);
-  }
-});
- */
-} //approve and reject showroom
 
 //o_id ===> Owner Object Id
 router.put("/admin/approveowner/:o_id", async (req, res) => {

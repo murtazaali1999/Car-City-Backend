@@ -23,10 +23,17 @@ const ShowRoomSchema = mongoose.Schema({
   showroom_image: {
     //check its type during using netlify
     type: String,
+    default: null
   },
 
   phone_number: {
     type: Number,
+    default: null
+  },
+
+  city: {
+    type: String,
+    default: null
   },
 
   opening_time: {

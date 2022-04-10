@@ -12,16 +12,22 @@ const Company = mongoose.model("Company");
 
 router.get("/get/allcompanies", async (req, res) => {
   try {
-    await Company.find({}).exec((err, companies) => {
-      if (!err) {
-        if (companies.length == 0 || !companies || companies == []) {
-          return res.status(400).json({ message: "no showrooms exist" });
+    await Company.find({})
+      .lean()
+      .populate("ownerid showroomid").exec((err, companies) => {
+        if (!err) {
+          if (companies.length == 0 || !companies || companies == []) {
+            return res.status(400).json({ message: "no showrooms exist" });
+          } else {
+            companies.map((company) => {
+              delete company?.ownerid?.password;
+            })
+            res.status(200).json({ message: companies });
+          }
+        } else {
+          console.log(err.message);
         }
-        res.status(200).json({ message: companies });
-      } else {
-        console.log(err.message);
-      }
-    });
+      });
   } catch (err) {
     console.log(err.message);
   }
@@ -30,6 +36,7 @@ router.get("/get/allcompanies", async (req, res) => {
 router.get("/get/singlecompany/:c_id", async (req, res) => {
   try {
     const company = await Company.findOne({ _id: req.params.c_id })
+      .lean()
       .populate("ownerid showroomid")
       .catch((err) => {
         return console.log(err.message);
@@ -38,6 +45,7 @@ router.get("/get/singlecompany/:c_id", async (req, res) => {
     if (company == null || !company || company == [] || company.length == 0) {
       return res.status(400).json({ message: company });
     } else {
+      delete company.ownerid.password;
       return res.status(200).json({ message: company });
     }
   } catch (err) {
