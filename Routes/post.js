@@ -113,6 +113,11 @@ router.post("/post/createpost/:showroomid", async (req, res) => {
       showroomid: req.params.showroomid, //above all for car
     });
 
+    const newPost = new Post({
+      post_type,
+      carid: newCar._id
+    });
+
     await newCar
       .save()
       .then(() => {
@@ -122,11 +127,15 @@ router.post("/post/createpost/:showroomid", async (req, res) => {
         console.log(err);
       });
 
-    const newPost = await Post.create({ post_type, carid: newCar._id }).catch(
-      (err) => {
-        console.log(err);
-      }
-    );
+
+    await newPost.save()
+      .then(() => {
+        console.log("Post Saved Successfully");
+      }).catch(
+        (err) => {
+          console.log(err);
+        }
+      );
 
     await ShowRoom.findOneAndUpdate(
       { _id: req.params.showroomid },
@@ -147,7 +156,7 @@ router.get("/get/allposts", async (req, res) => {
       .catch((err) => {
         return console.log(err);
       });
-    if (posts == null || !posts || posts == [] || posts == undefined) {
+    if (posts == [] || posts == undefined) {
       return res.status(400).send("no posts exist", false);
     }
 
