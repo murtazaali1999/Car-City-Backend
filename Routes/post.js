@@ -130,10 +130,9 @@ router.post("/post/createpost/:showroomid", async (req, res) => {
 
     await ShowRoom.findOneAndUpdate(
       { _id: req.params.showroomid },
-      { $push: { postid: newPost } }
-    );
-    /*     console.log("New-Post==>", newPost);
-     */
+      { $push: { "postid": newPost._id } }
+    )
+      .catch((err) => { return res.status(400).json({ error: err }) })
 
     res.status(200).json({ Post: newPost, message: "Car Posted Successfully to Showroom" });
   } catch (err) {
@@ -255,5 +254,30 @@ router.put("/put/updatepost/:p_id", async (req, res) => {
     console.log(err.message);
   }
 });
+
+router.post("/delete/delete_post/:p_id", async (req, res) => {
+  const post = await Post.findOneAndDelete({ _id: req.params.p_id })
+    .populate({
+      path: "carid",
+      populate:
+      {
+        path: "showroomid",
+      }
+    }).catch((err) => { return res.status(400).json({ error: err }) });
+
+  if (post == {} || post == undefined || post == null) {
+    return res.status(400).json({ message: "Post not Found" });
+  }
+
+  const car = await Car.findOneAndDelete({ _id: post.carid_id }).catch((err) => {
+    return res.status(400).json({ error: err });
+  });
+
+  await ShowRoom.updateOne({ _id: post.showroomid_id }, { $pull: { postid: post.showroomid._id } }).catch((err) => {
+    return res.status(400).json({ error: err })
+  });
+
+  return res.status(200).json({ message: "Post Deleted Sucessfully" });
+})
 
 module.exports = router;

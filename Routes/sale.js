@@ -16,24 +16,23 @@ cst_id => customer id
 */
 
 router.post("/buycar/:cst_id/:c_id", async (req, res) => {
-  const car = await Car.findOne({ _id: req.params.c_id });
-  const customer = await Customer.findOne({ _id: req.params.cst_id });
+  try {
+    if (!req.params.c_id || req.params.cst_id)
+      return res.status(400).json({ error: "One or More fields are empty" });
 
-  const newSale = new Sale({
-    carid: car._id,
-    customerid: customer._id,
-  });
-
-  newSale
-    .save()
-    .then(() => console.log("Car sold Sucessfully"))
-    .catch((err) => console.log(err));
-
-  await Car.deleteOne({ _id: car._id })
-    .then(() => console.log("Car Sold"))
-    .catch((err) => {
-      console.log(err);
+    const newSale = new Sale({
+      carid: req.params.c_id,
+      customerid: req.params.cst_id,
     });
+
+    newSale
+      .save()
+      .then(() => console.log("Car sold Sucessfully"))
+      .catch((err) => console.log(err));
+
+  } catch (errs) {
+    return res.status(400).json({ error: err })
+  }
 });
 
 module.exports = router;
