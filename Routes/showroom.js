@@ -195,28 +195,33 @@ router.put("/put/updateshowroom/:s_id", async (req, res) => {
   }
 });
 
-router.post("/delete/single_showroom/:s_id", async (req, res) => {
-  const showroom = await ShowRoom.findOneAndDelete({ _id: req.params.s_id })
+router.post("/delete/showroom/:s_id", async (req, res) => {
+  const showroom = await ShowRoom
+    .findOneAndDelete({ _id: req.params.s_id })
     .populate({
       path: "postid",
       populate:
       {
         path: "carid",
       }
-    }).catch((err) => { return res.status(400).json({ error: err }) });
+    })
+    .catch((err) => { return res.status(400).json({ error: err }) });
 
-  if (showroom == {} || showroom == undefined || showroom == null) {
+  if (showroom == {} || showroom == undefined) {
     return res.status(400).json({ message: "ShowRoom not Found" });
   }
 
-  showroom.postid.map(async (post) => {
-    await Post.findOneAndDelete({ _id: post._id }).catch((err) => {
-      return res.status(400).json({ error: err });
-    });
+  showroom?.postid.map(async (post) => {
+    await Post.findOneAndDelete({ _id: post._id })
+      .catch((err) => {
+        return res.status(400).json({ error: err });
+      });
 
-    await Car.findOneAndDelete({ _id: post.carid }).catch((err) => {
-      return res.status(400).json({ error: err });
-    });
+    await Car.findOneAndDelete({ _id: post.carid })
+      .catch((err) => {
+        return res.status(400).json({ error: err });
+      });
+
   });
 
   return res.status(200).json({ message: "ShowRoom Deleted Sucessfully" });

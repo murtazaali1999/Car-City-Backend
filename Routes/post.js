@@ -193,7 +193,7 @@ router.get('/get/postbytype/:type', async (req, res) => {
 router.get('/get/postbypreferences', async (req, res) => {
 	let userPattern = new RegExp('^' + req.query);
 	const posts = await Post.find({}).populate('carid');
-	posts.map((post) => {}); ///
+	posts.map((post) => { }); ///
 	console.log('query result=>', await Post.find({ userPattern }));
 });
 
@@ -296,17 +296,17 @@ router.post('/delete/delete_post/:p_id', async (req, res) => {
 		return res.status(400).json({ message: 'Post not Found' });
 	}
 
-	const car = await Car.findOneAndDelete({ _id: post.carid_id }).catch(
+	const car = await Car.findOneAndDelete({ _id: post.carid._id }).catch(
 		(err) => {
-			return res.status(400).json({ error: err });
+			return console.log(err);
 		}
 	);
-
+	//
 	await ShowRoom.updateOne(
-		{ _id: post.showroomid_id },
-		{ $pull: { postid: post.showroomid._id } }
+		{ _id: car.showroomid },
+		{ $pull: { postid: post._id } }
 	).catch((err) => {
-		return res.status(400).json({ error: err });
+		return console.log(err);
 	});
 
 	return res.status(200).json({ message: 'Post Deleted Sucessfully' });
