@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const epxress = require("express");
+const mongoose = require('mongoose');
+const epxress = require('express');
 const router = epxress.Router();
 
 //create post //
@@ -20,273 +20,296 @@ const router = epxress.Router();
 /get/postbypreferences ==>
  */
 
-const Post = mongoose.model("Post");
-const Car = mongoose.model("Car");
-const ShowRoom = mongoose.model("ShowRoom");
+const Post = mongoose.model('Post');
+const Car = mongoose.model('Car');
+const ShowRoom = mongoose.model('ShowRoom');
 
-router.post("/post/createpost/:showroomid", async (req, res) => {
-  const {
-    car_name,
-    car_model,
-    registered_in,
-    number_plate,
-    sale_price,
-    rent_price,
-    fuel_avg,
-    seats,
-    bags,
-    assembly,
-    body_type,
-    color,
-    engine_type,
-    transmission,
-    car_produced,
-    car_image,
-    discription,
-    features,
-    car_milage, //above all for car
-    post_type, //for post creation
-  } = req.body;
+router.post('/post/createpost/:showroomid', async (req, res) => {
+	const {
+		car_name,
+		car_model,
+		registered_in,
+		number_plate,
+		sale_price,
+		rent_price,
+		fuel_avg,
+		seats,
+		bags,
+		assembly,
+		body_type,
+		color,
+		engine_type,
+		transmission,
+		car_produced,
+		car_image,
+		discription,
+		features,
+		car_milage, //above all for car
+		post_type, //for post creation
+	} = req.body;
 
-  if (
-    !car_name ||
-    !car_model ||
-    !registered_in ||
-    !number_plate ||
-    !sale_price ||
-    !rent_price ||
-    !fuel_avg ||
-    !seats ||
-    !bags ||
-    !assembly ||
-    !body_type ||
-    !color ||
-    !engine_type ||
-    !transmission ||
-    !car_produced ||
-    !car_image ||
-    !discription ||
-    !features ||
-    !car_milage ||
-    !post_type ||
-    !req.params.showroomid
-  ) {
-    return res.status(400).json({ message: "one or more fields are emptys" });
-  }
+	if (
+		!car_name ||
+		!car_model ||
+		!registered_in ||
+		!number_plate ||
+		!sale_price ||
+		!rent_price ||
+		!fuel_avg ||
+		!seats ||
+		!bags ||
+		!assembly ||
+		!body_type ||
+		!color ||
+		!engine_type ||
+		!transmission ||
+		!car_produced ||
+		!car_image ||
+		!discription ||
+		!features ||
+		!car_milage ||
+		!post_type ||
+		!req.params.showroomid
+	) {
+		return res.status(400).json({ message: 'one or more fields are emptys' });
+	}
 
-  try {
-    const cars = await Car.find({}).catch((err) => {
-      console.log(err);
-    });
+	try {
+		const cars = await Car.find({}).catch((err) => {
+			console.log(err);
+		});
 
-    let check1 = false; //check if name is same
-    cars.map((post) => {
-      if (post.car_name == car_name) {
-        check1 = true;
-      }
-    });
+		let check1 = false; //check if name is same
+		cars.map((post) => {
+			if (post.car_name == car_name) {
+				check1 = true;
+			}
+		});
 
-    if (check1 == true) {
-      return res.status(400).json({ message: "this car already exists" });
-    }
+		if (check1 == true) {
+			return res.status(400).json({ message: 'this car already exists' });
+		}
 
-    const newCar = new Car({
-      car_name,
-      car_model,
-      registered_in,
-      number_plate,
-      sale_price,
-      rent_price,
-      fuel_avg,
-      seats,
-      bags,
-      assembly,
-      body_type,
-      color,
-      engine_type,
-      transmission,
-      car_produced,
-      car_image,
-      discription,
-      features,
-      car_milage,
-      showroomid: req.params.showroomid, //above all for car
-    });
+		const newCar = new Car({
+			car_name,
+			car_model,
+			registered_in,
+			number_plate,
+			sale_price,
+			rent_price,
+			fuel_avg,
+			seats,
+			bags,
+			assembly,
+			body_type,
+			color,
+			engine_type,
+			transmission,
+			car_produced,
+			car_image,
+			discription,
+			features,
+			car_milage,
+			showroomid: req.params.showroomid, //above all for car
+		});
 
-    const newPost = new Post({
-      post_type,
-      carid: newCar._id
-    });
+		const newPost = new Post({
+			post_type,
+			carid: newCar._id,
+		});
 
-    await newCar
-      .save()
-      .then(() => {
-        console.log("Car Saved Successfully");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+		await newCar
+			.save()
+			.then(() => {
+				console.log('Car Saved Successfully');
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 
+		await newPost
+			.save()
+			.then(() => {
+				console.log('Post Saved Successfully');
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 
-    await newPost.save()
-      .then(() => {
-        console.log("Post Saved Successfully");
-      }).catch(
-        (err) => {
-          console.log(err);
-        }
-      );
+		await ShowRoom.findOneAndUpdate(
+			{ _id: req.params.showroomid },
+			{ $push: { postid: newPost._id } }
+		).catch((err) => {
+			return res.status(400).json({ error: err });
+		});
 
-    await ShowRoom.findOneAndUpdate(
-      { _id: req.params.showroomid },
-      { $push: { "postid": newPost._id } }
-    )
-      .catch((err) => { return res.status(400).json({ error: err }) })
-
-    res.status(200).json({ Post: newPost, message: "Car Posted Successfully to Showroom" });
-  } catch (err) {
-    console.log(err.message);
-  }
+		res
+			.status(200)
+			.json({ Post: newPost, message: 'Car Posted Successfully to Showroom' });
+	} catch (err) {
+		console.log(err.message);
+	}
 });
 
-router.get("/get/allposts", async (req, res) => {
-  try {
-    const posts = await Post.find({})
-      .populate("carid")
-      .catch((err) => {
-        return console.log(err);
-      });
-    if (posts == [] || posts == undefined) {
-      return res.status(400).send("no posts exist", false);
-    }
+router.get('/get/allposts', async (req, res) => {
+	try {
+		const posts = await Post.find({})
+			.populate('carid')
+			.catch((err) => {
+				return console.log(err);
+			});
+		if (posts == [] || posts == undefined) {
+			return res.status(400).send('no posts exist', false);
+		}
 
-    return res.status(200).json({ message: posts });
-  } catch (err) {
-    console.log(err);
-  }
+		return res.status(200).json({ message: posts });
+	} catch (err) {
+		console.log(err);
+	}
 });
 
 //either for buying or renting
-router.get("/get/postbytype/:type", async (req, res) => {
-  try {
-    const posts = await Post.find({ post_type: req.params.type }).catch(
-      (err) => {
-        console.log(err);
-        return res
-          .status(400)
-          .json({ message: "there was an error finding posts" });
-      }
-    );
-    if (posts == null || !posts || posts == [] || posts == undefined) {
-      return res.status(400).json({ message: "no posts exist" });
-    }
+router.get('/get/postbytype/:type', async (req, res) => {
+	try {
+		const posts = await Post.find({ post_type: req.params.type }).catch(
+			(err) => {
+				console.log(err);
+				return res
+					.status(400)
+					.json({ message: 'there was an error finding posts' });
+			}
+		);
+		if (posts == null || !posts || posts == [] || posts == undefined) {
+			return res.status(400).json({ message: 'no posts exist' });
+		}
 
-    return res.status(200).json({ message: posts });
-  } catch (err) {
-    console.log(err);
-  }
+		return res.status(200).json({ message: posts });
+	} catch (err) {
+		console.log(err);
+	}
 });
 
 //search by preferences
-router.get("/get/postbypreferences", async (req, res) => {
-  let userPattern = new RegExp("^" + req.query);
-  const posts = await Post.find({}).populate("carid");
-  posts.map((post) => { }); ///
-  console.log("query result=>", await Post.find({ userPattern }));
+router.get('/get/postbypreferences', async (req, res) => {
+	let userPattern = new RegExp('^' + req.query);
+	const posts = await Post.find({}).populate('carid');
+	posts.map((post) => {}); ///
+	console.log('query result=>', await Post.find({ userPattern }));
 });
 
-router.get("/get/postbyid/:pst_id", async (req, res) => {
-  try {
-    await Post.findOne({ _id: req.params.pst_id })
-      .populate("carid")
-      .exec((err, post) => {
-        if (!err) {
-          if (post == [] || post == null || post == undefined || !post) {
-            console.log("There are currently no posts available");
-          } else {
-            return res.status(200).json({ message: post });
-          }
-        } else {
-          console.log(err);
-        }
-      });
-  } catch (err) {
-    console.log(err);
-  }
+router.get('/get/postbyid/:pst_id', async (req, res) => {
+	try {
+		await Post.findOne({ _id: req.params.pst_id })
+			.populate('carid')
+			.exec((err, post) => {
+				if (!err) {
+					if (post == [] || post == null || post == undefined || !post) {
+						console.log('There are currently no posts available');
+					} else {
+						return res.status(200).json({ message: post });
+					}
+				} else {
+					console.log(err);
+				}
+			});
+	} catch (err) {
+		console.log(err);
+	}
 });
 
-router.get("/get/getsinglepost/:p_id", async (req, res) => {
-  try {
-    const post = await Post.findOne({ _id: req.params.p_id })
-      .populate("carid")
-      .catch((err) => {
-        return console.log(err);
-      });
+router.get('/get/getsinglepost/:p_id', async (req, res) => {
+	try {
+		const post = await Post.findOne({ _id: req.params.p_id })
+			.populate('carid')
+			.catch((err) => {
+				return console.log(err);
+			});
 
-    if (post == null || !post || post == [] || post.length == 0) {
-      return res.status(400).send("Post does'nt exist with this ID", false);
-    }
+		if (post == null || !post || post == [] || post.length == 0) {
+			return res.status(400).send("Post does'nt exist with this ID", false);
+		}
 
-    return res.status(200).json({ message: post });
-  } catch (err) {
-    console.log(err);
-  }
+		return res.status(200).json({ message: post });
+	} catch (err) {
+		console.log(err);
+	}
 });
 
-router.put("/put/updatepost/:p_id", async (req, res) => {
-  const { post_type } = req.body;
+router.put('/put/updatepost/:p_id', async (req, res) => {
+	try {
+		const post = await Post.findOne({ _id: req.params.p_id })
+			.populate('carid')
+			.catch((err) => {
+				return console.log(err.message);
+			});
 
-  try {
-    const post = await Post.findOne({ _id: req.params.p_id })
-      .populate("carid")
-      .catch((err) => {
-        return console.log(err.message);
-      });
+		if (post == null || !post || post == [] || post.length == 0) {
+			return res
+				.status(400)
+				.json({ message: "Post does'nt exist with this ID" });
+		}
 
-    if (post == null || !post || post == [] || post.length == 0) {
-      return res
-        .status(400)
-        .json({ message: "Post does'nt exist with this ID" });
-    }
+		// updating car
+		const car = await Car.findByIdAndUpdate(post.carid._id, {
+			$set: {
+				...req.body,
+			},
+		}).catch((err) => {
+			console.log(err);
+		});
 
-    post.post_type = post_type;
+		console.log('car', car);
 
-    await post
-      .save()
-      .then(() => {
-        console.log("Post Updated Sucessfull");
-      })
-      .catch((err) => console.log(err.message));
+		const { post_type } = req.body;
+		if (!!post_type) post.post_type = post_type;
+		await post
+			.save()
+			.then(() => {
+				console.log('Post Updated Sucessfull');
+			})
+			.catch((err) => console.log(err.message));
 
-    return res.status(200).json({ message: post });
-  } catch (err) {
-    console.log(err.message);
-  }
+		const updatedPost = await Post.findOne({ _id: req.params.p_id })
+			.populate('carid')
+			.catch((err) => {
+				return console.log(err.message);
+			});
+		return res.status(200).json({ message: updatedPost });
+	} catch (err) {
+		console.log(err.message);
+	}
 });
 
-router.post("/delete/delete_post/:p_id", async (req, res) => {
-  const post = await Post.findOneAndDelete({ _id: req.params.p_id })
-    .populate({
-      path: "carid",
-      populate:
-      {
-        path: "showroomid",
-      }
-    }).catch((err) => { return res.status(400).json({ error: err }) });
+router.post('/delete/delete_post/:p_id', async (req, res) => {
+	const post = await Post.findOneAndDelete({ _id: req.params.p_id })
+		.populate({
+			path: 'carid',
+			populate: {
+				path: 'showroomid',
+			},
+		})
+		.catch((err) => {
+			return res.status(400).json({ error: err });
+		});
 
-  if (post == {} || post == undefined || post == null) {
-    return res.status(400).json({ message: "Post not Found" });
-  }
+	if (post == {} || post == undefined || post == null) {
+		return res.status(400).json({ message: 'Post not Found' });
+	}
 
-  const car = await Car.findOneAndDelete({ _id: post.carid_id }).catch((err) => {
-    return res.status(400).json({ error: err });
-  });
+	const car = await Car.findOneAndDelete({ _id: post.carid_id }).catch(
+		(err) => {
+			return res.status(400).json({ error: err });
+		}
+	);
 
-  await ShowRoom.updateOne({ _id: post.showroomid_id }, { $pull: { postid: post.showroomid._id } }).catch((err) => {
-    return res.status(400).json({ error: err })
-  });
+	await ShowRoom.updateOne(
+		{ _id: post.showroomid_id },
+		{ $pull: { postid: post.showroomid._id } }
+	).catch((err) => {
+		return res.status(400).json({ error: err });
+	});
 
-  return res.status(200).json({ message: "Post Deleted Sucessfully" });
-})
+	return res.status(200).json({ message: 'Post Deleted Sucessfully' });
+});
 
 module.exports = router;

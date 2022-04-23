@@ -66,7 +66,7 @@ const CarSchema = mongoose.Schema({
 
   car_produced: {
     //in which year it was produced
-    type: Number,
+    type: String,
   },
 
   car_image: [
