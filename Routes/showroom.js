@@ -95,37 +95,19 @@ router.put("/put/createshowroom/:c_id", async (req, res) => {
 
 router.get("/get/allshowroom", async (req, res) => {
   try {
-    await ShowRoom.find({}).exec((err, showrooms) => {
-      if (!err) {
-        if (showrooms.length == 0 || !showrooms || showrooms == []) {
-          return res.status(400).json({ message: "no showrooms exist" });
+    await ShowRoom.find({})
+      .populate("companyId")
+      .populate({
+        path: "postid",
+        populate: {
+          path: "carid"
         }
-        res.status(200).json({ message: showrooms });
-      } else {
-        console.log(err.message);
-      }
-    });
-  } catch (err) {
-    console.log(err.message);
-  }
-});
-
-//s_id is showroom id
-router.get("/get/allshowroomcars/:s_id", async (req, res) => {
-  //populate to get posts then cars
-  try {
-    await ShowRoom.find({ _id: req.params.s_id })
-      .populate("postid carid")
-      .exec((err, showroom) => {
+      }).exec((err, showrooms) => {
         if (!err) {
-          if (!showroom || showroom == null || showroom == undefined) {
-            return res.status(400).json({ message: "show-rooms do not exist" });
-          } else {
-            const cars = showroom.carid.map((car) => {
-              return car;
-            });
-            return res.status(200).json({ message: cars });
+          if (showrooms.length == 0 || !showrooms || showrooms == []) {
+            return res.status(400).json({ message: "no showrooms exist" });
           }
+          res.status(200).json({ message: showrooms });
         } else {
           console.log(err.message);
         }
@@ -137,8 +119,14 @@ router.get("/get/allshowroomcars/:s_id", async (req, res) => {
 
 router.get("/get/singleshowroom/:s_id", async (req, res) => {
   try {
-    const showroom = await ShowRoom.find({ _id: req.params.s_id })
-      .populate("companyId postid")
+    const showroom = await ShowRoom.findOne({ _id: req.params.s_id })
+      .populate("companyId")
+      .populate({
+        path: "postid",
+        populate: {
+          path: "carid"
+        }
+      })
       .catch((err) => console.log(err));
     if (showroom.length == 0 || !showroom || showroom == []) {
       return res.status(400).json({
